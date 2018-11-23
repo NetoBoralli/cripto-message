@@ -1,3 +1,11 @@
+use master;
+go
+
+create database crypto;
+go
+
+use crypto;
+go
 
 create view [dbo].[rand_view] as
 select rand() value;
@@ -34,7 +42,7 @@ create table dbo.users (
 	identifier char(8) not null default([dbo].[new_id]()),
 	username varchar(100) not null,
 	email varchar(100) not null,
-	password varchar(50) not null,
+	password varchar(100) not null,
 	public_key varchar(max),
 	constraint PK_users primary key (id),
 	constraint UQ_users_1 unique (email),
@@ -48,6 +56,7 @@ create table dbo.messages (
 	sender_id int not null,
 	sender_encrypted_message varchar(max) not null,
 	receiver_encrypted_message varchar(max) not null,
+	date datetimeoffset not null default sysdatetimeoffset(),
 	constraint PK_types primary key (id),
 );
 go

@@ -7,10 +7,10 @@ namespace MessageAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("{identifier?}")]
+        public IActionResult Get(string identifier = null)
         {
-            var users = Models.User.GetUsers();
+            var users = Models.User.GetUsers(identifier);
 
             return Ok(users);
         }
@@ -33,7 +33,7 @@ namespace MessageAPI.Controllers
             return Ok(user);
         }
 
-        [HttpPost("singup")]
+        [HttpPost("signup")]
         public IActionResult SingUp([FromBody] dynamic data)
         {
             string username = data.username;
@@ -83,6 +83,45 @@ namespace MessageAPI.Controllers
             else if (result == 0) return BadRequest("Invalid data");
 
             return Ok(result);
+        }
+
+        [HttpPut("privateKey/{identifier}")]
+        public IActionResult SetPrivateKey([FromBody] dynamic data, string identifier)
+        {
+            string privateKey = data.privateKey;
+            if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(privateKey))
+            {
+                return BadRequest("Invalid data");
+            }
+
+            try
+            {
+                Models.User.SetPrivateKey(identifier, privateKey);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Error saving private key");
+            }
+        }
+
+        [HttpGet("privateKey/{identifier}")]
+        public IActionResult GetPrivateKey(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+            {
+                return BadRequest("Invalid data");
+            }
+
+            try
+            {
+                var privateKey = Models.User.GetPrivateKey(identifier);
+                return Ok(new { privateKey }) as IActionResult;
+            }
+            catch
+            {
+                return BadRequest("The file could not be read");
+            }
         }
     }
 }

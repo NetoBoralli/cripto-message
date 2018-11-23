@@ -32,11 +32,11 @@ namespace MessageAPI.Controllers
             if (senderId == 0 || senderId == null || receiverId == 0 || receiverId == null || string.IsNullOrWhiteSpace(senderEncryptedMessage) || string.IsNullOrWhiteSpace(receiverEncryptedMessage))
                 return BadRequest("Invalid data");
 
-            var res = new Message().AddMessage(senderId.Value, receiverId.Value, senderEncryptedMessage, receiverEncryptedMessage);
+            var identifier = new Message().AddMessage(senderId.Value, receiverId.Value, senderEncryptedMessage, receiverEncryptedMessage);
 
-            if (res == 0) return BadRequest("Invalid data");
+            if (string.IsNullOrWhiteSpace(identifier)) return BadRequest("Invalid data");
 
-            return Ok(res);
+            return Ok(new { identifier });
         }
 
     }

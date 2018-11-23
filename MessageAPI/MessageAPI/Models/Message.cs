@@ -33,7 +33,7 @@ namespace MessageAPI.Models
                         from messages m
                         where (sender_id=@SenderId and receiver_id=@ReceiverId) 
                             or (sender_id=@ReceiverId and receiver_id=@SenderId) 
-                        ";
+                        order by m.date desc;";
 
             using (var conn = DbProvider.GetSqlConnection())
             {
@@ -52,10 +52,10 @@ namespace MessageAPI.Models
             }
         }
 
-        public int AddMessage(int senderId, int receiverId, string senderEncryptedMessage, string receiverEncryptedMessage)
+        public string AddMessage(int senderId, int receiverId, string senderEncryptedMessage, string receiverEncryptedMessage)
         {
             if (senderId == 0 || receiverId == 0 || string.IsNullOrWhiteSpace(senderEncryptedMessage) || string.IsNullOrWhiteSpace(receiverEncryptedMessage))
-                return 0;
+                return null;
 
             var query = @"insert into messages (receiver_id, sender_id, sender_encrypted_message, receiver_encrypted_message) output inserted.identifier
                           values (@ReceiverId, @SenderId, @SenderEncryptedMessage, @ReceiverEncryptedMessage);";
@@ -64,15 +64,14 @@ namespace MessageAPI.Models
             {
                 try
                 {
-                    var data = conn.ExecuteScalar<int>(query, new { ReceiverId = receiverId, SenderId = senderId, SenderEncryptedMessage = senderEncryptedMessage, ReceiverEncryptedMessage = receiverEncryptedMessage });
-                    if (data != 0)
+                    var data = conn.ExecuteScalar<string>(query, new { ReceiverId = receiverId, SenderId = senderId, SenderEncryptedMessage = senderEncryptedMessage, ReceiverEncryptedMessage = receiverEncryptedMessage });
+                    if (!string.IsNullOrWhiteSpace(data))
                         return data;
                     else
-                        return 0;
+                        return null;
                 }
                 catch (Exception e)
                 {
-                    if (e.Message.Contains("UNIQUE KEY constraint")) return -1;
                     throw e;
                 }
             }

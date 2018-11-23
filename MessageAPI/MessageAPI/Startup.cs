@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using MessageAPI.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace MessageAPI
 {
@@ -18,6 +12,7 @@ namespace MessageAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            DbProvider.SetConnectionString("Data Source=localhost\\SQL2017; Initial Catalog=crypto; Integrated Security=false; User Id=sa; Password=abc123##;");
         }
 
         public IConfiguration Configuration { get; }
@@ -39,6 +34,11 @@ namespace MessageAPI
             {
                 app.UseHsts();
             }
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
 
             app.UseHttpsRedirection();
             app.UseMvc();

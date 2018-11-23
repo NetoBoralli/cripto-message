@@ -2,6 +2,7 @@
 using MessageAPI.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace MessageAPI.Models
@@ -15,21 +16,22 @@ namespace MessageAPI.Models
         public string Email { get; set; }
         public string PublicKey { get; set; }
 
-        public static List<User> GetUsers()
+        public static List<User> GetUsers(string identifier = null)
         {
             var query = $@"select
                                 u.id as Id,
                                 u.identifier as Identifier,
                                 u.username as Username,
                                 u.email as Email,
-                                u.public_key
-                            from users u;";
+                                u.public_key as PublicKey
+                            from users u
+                            {(!string.IsNullOrWhiteSpace(identifier) ? "where u.identifier=@Identifier" : null)};";
 
             using (var conn = DbProvider.GetSqlConnection())
             {
                 try
                 {
-                    var data = conn.Query<User>(query).ToList();
+                    var data = conn.Query<User>(query, new { Identifier = identifier }).ToList();
                     if (data != null)
                         return data;
                     else
@@ -97,6 +99,7 @@ namespace MessageAPI.Models
                 }
                 catch (Exception e)
                 {
+                    if (e.Message.Contains("Input string was not in a correct format.")) return 1;
                     if (e.Message.Contains("UNIQUE KEY constraint")) return -1;
                     throw e;
                 }
@@ -144,11 +147,8 @@ namespace MessageAPI.Models
             {
                 try
                 {
-                    var data = conn.ExecuteScalar<int>(query, new { PublickKey = publicKey, Identifier = identifier });
-                    if (data != 0)
-                        return data;
-                    else
-                        return 0;
+                    var data = conn.ExecuteScalar<int>(query, new { PublicKey = publicKey, Identifier = identifier });
+                    return 1;
                 }
                 catch (Exception e)
                 {
@@ -158,9 +158,39 @@ namespace MessageAPI.Models
             }
         }
 
+        public static async void SetPrivateKey(string identifier, string text)
+        {
+            // Set a variable to the My Documents path.
+            string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            // Write the text asynchronously to a new file named "WriteTextAsync.txt".
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(mydocpath, $"{identifier}.priv")))
+            {
+                await outputFile.WriteAsync(text);
+            }
+        }
+
+        public static string GetPrivateKey(string identifier)
+        {
+            string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader(Path.Combine(mydocpath, $"{identifier}.priv")))
+                {
+                    // Read the stream to a string, and write the string to the console.
+                    string privateKey = sr.ReadToEnd();
+                    return !string.IsNullOrWhiteSpace(privateKey) ? privateKey : null;
+                }
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
         public static string GetSHA(string password)
         {
-            return password.SHA256Crpt(true);
+            return password.SHA256Crpt(false);
         }
     }
 }
