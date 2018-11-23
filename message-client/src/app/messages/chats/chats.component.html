@@ -1,0 +1,28 @@
+<div fxLayoutAlign="center start">
+  <div class="page-container mat-elevation-z2">
+    <form class="message-form" [formGroup]="form">
+      <mat-form-field fxFlexFill>
+        <textarea matInput placeholder="Write a message" #message formControlName="message" matTextareaAutosize matAutosizeMinRows="2" maxlength="120"></textarea>
+        <button matSuffix mat-icon-button (click)="sendMessage()">
+          <mat-icon style="color: #818181">send</mat-icon>
+        </button>
+
+        <button matSuffix mat-icon-button (click)="getMessages()">
+          <mat-icon style="color: #818181">update</mat-icon>
+        </button>
+        <mat-hint align="end">{{message.value.length}} / 120</mat-hint>
+      </mat-form-field>
+    </form>
+    <div id="message-box" class="message-box">
+      <ng-container *ngFor="let m of messages">
+        <div *ngIf="sender.id === m.senderId" class="sender message">
+          {{m.senderEncryptedMessage}}
+        </div>
+
+        <div *ngIf="sender.id !== m.senderId" class="receiver message">
+          {{m.receiverEncryptedMessage}}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

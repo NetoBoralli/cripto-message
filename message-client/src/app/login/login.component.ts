@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
+import * as openpgp from './../shared/openpgp';
+
 import { LoginService } from './shared/login.service';
 
 @Component({
@@ -15,6 +17,8 @@ import { LoginService } from './shared/login.service';
 export class LoginComponent implements OnInit {
 
   subscription: Subscription;
+  subscription2: Subscription;
+  subscription3: Subscription;
 
   form: FormGroup;
 
@@ -39,12 +43,50 @@ export class LoginComponent implements OnInit {
 
     this.subscription = this.loginService.login(fData.email, fData.password).subscribe(data => {
       const user = data;
-      this.router.navigate(['messages']);
+      user.password = fData.password;
+      this.subscription3 = this.loginService.getPrivateKey(user.identifier).subscribe(data2 => {
+        if (data2.privateKey) {
+          user.privateKey = data2.privateKey;
+          localStorage.setItem('crypto.currentUser', JSON.stringify(user));
+          this.router.navigate(['users']);
+        } else {
+          this.generateKeys(user);
+        }
+      }, error => {
+        this.generateKeys(user);
+      });
     }, error => {
-      if (error.status === 401) {
-        this.snackBar.open('Erro no login!', '', { duration: 2000 });
+      if (error.error === 'User or password incorrect' || error.error === 'Invalid data') {
+        this.snackBar.open(error.error, '', { duration: 2000 });
+        this.form.controls.password.reset();
+      } else {
+        this.snackBar.open('Login error!', '', { duration: 2000 });
       }
     });
+  }
+
+  generateKeys(user) {
+    const keyOptions = {
+      userIds: [{ username: user.username, email: user.email }],
+      numBits: 2048,
+      passphrase: user.password
+    };
+
+    openpgp.generateKey(keyOptions)
+      .then((key) => {
+        user.publicKey = key.publicKeyArmored;
+        user.privateKey = key.privateKeyArmored;
+        console.log('chaves geradas');
+      }).then(() => {
+        localStorage.setItem('crypto.currentUser', JSON.stringify(user));
+        this.router.navigate(['users']);
+        this.subscription2 = this.loginService.setPublicKey(user.identifier, user.publicKey).subscribe(() => {
+          console.log('chave publica salva');
+        });
+        this.subscription2 = this.loginService.setPrivateKey(user.identifier, user.privateKey).subscribe(() => {
+          console.log('chave privada salva');
+        });
+      });
   }
 
 }

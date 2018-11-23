@@ -7,9 +7,10 @@ import { RouterModule } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { LoginService } from './shared/login.service';
 import { MaterialModule } from '../material/material.module';
+import { SingupComponent } from './singup/singup.component';
 
 @NgModule({
-  declarations: [LoginComponent],
+  declarations: [LoginComponent, SingupComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -18,7 +19,8 @@ import { MaterialModule } from '../material/material.module';
     MaterialModule
   ],
   exports: [
-    LoginComponent
+    LoginComponent,
+    SingupComponent
   ],
   providers: [
     LoginService

@@ -1,21 +1,24 @@
-<div fxLayout="column" fxLayoutAlign="center center">
-	<h3 style="color: #3f51b5; font-family:  Roboto,'Helvetica Neue',sans-serif;">Crypto Message</h3>
+<div style="width: 100%; height: 95vh;">
+  <div fxLayout="column" fxLayoutAlign="center center" style="padding: 20px;">
+    <h2 style="color: #3f51b5; font-family:  Roboto,'Helvetica Neue',sans-serif;">Crypto Message</h2>
+    <h4 style="color: #3f51b5; font-family:  Roboto,'Helvetica Neue',sans-serif;">Login</h4>
 
-	<form [formGroup]="form" (ngSubmit)="login()">
-		<div fxLayout="column">
+    <form [formGroup]="form" (ngSubmit)="login()" style="width: 40%;">
+      <div fxLayout="column">
 
-			<mat-form-field fFlexFill>
-				<input matInput formControlName="email" placeholder="Email" tabindex="1" required>
-			</mat-form-field>
+        <mat-form-field fxFlexFill>
+          <input matInput formControlName="email" placeholder="Email" tabindex="1" required>
+        </mat-form-field>
 
-			<mat-form-field fFlexFill>
-				<input matInput type="password" formControlName="password" placeholder="Password" tabindex="2" required>
-			</mat-form-field>
+        <mat-form-field fxFlexFill>
+          <input matInput type="password" formControlName="password" placeholder="Password" tabindex="2" required>
+        </mat-form-field>
 
-			<div fxLayout="row">
-				<button mat-raised-button color="primary" type="submit" fxFlex="40">Login</button>
-				<button mat-raised-button color="primary" routerLink="/singup" fxFlex="40" style="margin-left: 20%;">Sing in</button>
-			</div>
-		</div>
-	</form>
+        <div fxLayout="row">
+          <button mat-raised-button color="primary" type="submit" fxFlex="40">Login</button>
+          <button mat-raised-button type="button" color="primary" routerLink="/signup" fxFlex="40" style="margin-left: 20%;">Sing in</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>

@@ -8,6 +8,8 @@ import { LoginModule } from './login/login.module';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material/material.module';
+import { AuthService, AuthLoginService } from './auth.guard';
+import { MessagesModule } from './messages/messages.module';
 
 @NgModule({
   declarations: [
@@ -21,8 +23,12 @@ import { MaterialModule } from './material/material.module';
     HttpModule,
     HttpClientModule,
     MaterialModule,
+    MessagesModule
   ],
-  providers: [],
+  providers: [
+    AuthService,
+    AuthLoginService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

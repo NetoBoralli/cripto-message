@@ -1,0 +1,49 @@
+.page {
+  width: 100%;
+}
+
+.page-container {
+  background-color: #fafafa;
+  height: calc(100vh - 64px);
+  width: 70%;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.message-form {
+  padding: 8px 16px;
+  width: 95%;
+}
+
+.sender {
+  float: right;
+  // text-align: end;
+  align-self: flex-end;
+}
+
+.receiver {
+  float: left;
+}
+
+.message {
+  width: 40%;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+  padding: 12px;
+  border-radius: 5px;
+}
+
+.message-box {
+  width: 100%;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  flex-direction: column-reverse;
+  flex-wrap: nowrap;
+  display: flex;
+  padding-bottom: 5px;
+}
+
+@media screen and (max-width: 900px) {
+	.page-container {
+    width: 100%;
+  }
+}

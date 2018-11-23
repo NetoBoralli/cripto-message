@@ -1,0 +1,27 @@
+<div style="width: 100%; height: 95vh;">
+  <div fxLayout="column" fxLayoutAlign="center center" style="padding: 20px;">
+    <h4 style="color: #3f51b5; font-family:  Roboto,'Helvetica Neue',sans-serif;">Sign up</h4>
+
+    <form [formGroup]="form" (ngSubmit)="signup()" style="width: 40%;">
+      <div fxLayout="column">
+
+        <mat-form-field fxFlexFill>
+          <input matInput formControlName="name" placeholder="Name" tabindex="1" required>
+        </mat-form-field>
+
+        <mat-form-field fxFlexFill>
+          <input matInput formControlName="email" placeholder="Email" tabindex="2" required>
+        </mat-form-field>
+
+        <mat-form-field fxFlexFill>
+          <input matInput type="password" formControlName="password" placeholder="Password" tabindex="3" required>
+        </mat-form-field>
+
+        <div fxLayout="row">
+          <button mat-raised-button color="primary" type="submit" fxFlex="40">Create</button>
+          <button mat-raised-button type="button" color="primary" routerLink="/login" fxFlex="40" style="margin-left: 20%;">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

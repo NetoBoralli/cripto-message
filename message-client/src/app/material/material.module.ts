@@ -30,14 +30,13 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MAT_DATE_LOCALE,
-  MAT_DATE_FORMATS,
   MatPaginatorModule,
   MatDividerModule
 } from '@angular/material';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [NotFoundComponent],
   imports: [
     CommonModule,
     FlexLayoutModule,
@@ -105,6 +104,7 @@ import {
     MatTooltipModule,
     MatPaginatorModule,
     MatDividerModule,
+    NotFoundComponent
   ]
 })
 export class MaterialModule { }
