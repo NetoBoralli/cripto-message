@@ -14,6 +14,7 @@ namespace MessageAPI.Models
         public int SenderId { get; set; }
         public string SenderEncryptedMessage { get; set; }
         public string ReceiverEncryptedMessage { get; set; }
+        public DateTimeOffset? Date { get; set; }
 
         public List<Message> GetMessages(string senderIdentifier, string receiverIdentifier)
         {
@@ -29,7 +30,8 @@ namespace MessageAPI.Models
                             m.receiver_id as ReceiverId,
                             m.sender_id as SenderId,
                             m.sender_encrypted_message as SenderEncryptedMessage,
-                            m.receiver_encrypted_message as ReceiverEncryptedMessage
+                            m.receiver_encrypted_message as ReceiverEncryptedMessage,
+                            m.date as Date
                         from messages m
                         where (sender_id=@SenderId and receiver_id=@ReceiverId) 
                             or (sender_id=@ReceiverId and receiver_id=@SenderId) 
