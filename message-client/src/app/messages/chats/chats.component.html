@@ -16,10 +16,12 @@
     <div id="message-box" class="message-box">
       <ng-container *ngFor="let m of messages">
         <div *ngIf="sender.id === m.senderId" class="sender message">
+          <div style="font-size: 12px; color: #818181">{{getDate(m.date)}}</div>
           {{m.senderEncryptedMessage}}
         </div>
 
         <div *ngIf="sender.id !== m.senderId" class="receiver message">
+          <div style="font-size: 12px; color: #818181">{{getDate(m.date)}}</div>
           {{m.receiverEncryptedMessage}}
         </div>
       </ng-container>

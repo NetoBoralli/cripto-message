@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material';
 
 import { Subscription } from 'rxjs';
 import * as openpgp from './../../shared/openpgp';
+import * as moment from 'moment';
 
 import { MessageService } from '../shared/message.service';
 import { LoginService } from 'src/app/login/shared/login.service';
@@ -123,19 +124,6 @@ export class ChatsComponent implements OnInit {
     let senderEncryptedMessage = '';
     let receiverEncryptedMessage = '';
 
-
-    // const receiverOptions = {
-    //   userIds: [{ username: this.receiver.username, email: this.receiver.email }],
-    //   numBits: 2048,
-    //   passphrase: this.sender.password
-    // };
-
-    // const senderOptions = {
-    //   userIds: [{ username: this.sender.username, email: this.sender.email }],
-    //   numBits: 2048,
-    //   passphrase: this.sender.password
-    // };
-
     const options = {
       data: JSON.stringify(message),
       publicKeys: openpgp.key.readArmored(this.sender.publicKey).keys
@@ -162,5 +150,9 @@ export class ChatsComponent implements OnInit {
             });
         });
       });
+  }
+
+  getDate(date) {
+    return moment(date).format('DD/MM/YYYY') + ' as ' +  moment(date).format('HH:mm');
   }
 }

@@ -43,4 +43,8 @@ export class UsersComponent implements OnInit {
     if (screen.clientWidth < 900)
       this.userSidenav.close();
   }
+
+  swapSidenav() {
+    this.userSidenav.toggle();
+  }
 }
