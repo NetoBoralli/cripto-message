@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
-
+import { JwtHelperService } from '@auth0/angular-jwt';
 import * as openpgp from './../shared/openpgp';
 
 import { LoginService } from './shared/login.service';
@@ -34,6 +34,16 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    const token = localStorage.getItem('crypto.token');
+    const helper = new JwtHelperService();
+    const isExpired = helper.isTokenExpired(token);
+    if (!isExpired) {
+      const user = JSON.parse(localStorage.getItem('crypto.currentUser'));
+      if (user && user.identifier)
+        this.router.navigate(['/users']);
+    } else {
+      localStorage.removeItem('crypto.currentUser');
+    }
   }
 
   login() {
@@ -42,12 +52,21 @@ export class LoginComponent implements OnInit {
       return null;
 
     this.subscription = this.loginService.login(fData.email, fData.password).subscribe(data => {
-      const user = data;
+      const user = data.user;
       user.password = fData.password;
       this.subscription3 = this.loginService.getPrivateKey(user.identifier).subscribe(data2 => {
         if (data2.privateKey) {
           user.privateKey = data2.privateKey;
-          localStorage.setItem('crypto.currentUser', JSON.stringify(user));
+          const userToBeSaved = {
+            username: user.username,
+            id: user.id,
+            identifier: user.identifier,
+            email: user.email,
+            privateKey: user.privateKey,
+            publicKey: user.publicKey
+          };
+          localStorage.setItem('crypto.currentUser', JSON.stringify(userToBeSaved));
+          localStorage.setItem('crypto.token', data.token);
           this.router.navigate(['users']);
         } else {
           this.generateKeys(user);

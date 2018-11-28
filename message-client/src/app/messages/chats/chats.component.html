@@ -3,28 +3,41 @@
     <form class="message-form" [formGroup]="form">
       <mat-form-field fxFlexFill>
         <textarea matInput placeholder="Write a message" #message formControlName="message" matTextareaAutosize matAutosizeMinRows="2" maxlength="120"></textarea>
-        <button matSuffix mat-icon-button (click)="sendMessage()">
+        <button matSuffix mat-icon-button (click)="sendMessage()" [disabled]="!password">
           <mat-icon style="color: #818181">send</mat-icon>
         </button>
 
-        <button matSuffix mat-icon-button (click)="getMessages()">
+        <button matSuffix mat-icon-button (click)="getMessages()" [disabled]="!password">
           <mat-icon style="color: #818181">update</mat-icon>
         </button>
         <mat-hint align="end">{{message.value.length}} / 120</mat-hint>
       </mat-form-field>
     </form>
-    <div id="message-box" class="message-box">
-      <ng-container *ngFor="let m of messages">
-        <div *ngIf="sender.id === m.senderId" class="sender message">
-          <div style="font-size: 12px; color: #818181">{{getDate(m.date)}}</div>
-          {{m.senderEncryptedMessage}}
-        </div>
+    <div *ngIf="!password">
+        <div class="password-message">You can only see your messages after retyping your password</div>
+        <form class="message-form" [formGroup]="passwordForm">
+          <mat-form-field fxFlexFill>
+            <input matInput formControlName="password" type="password" placeholder="Type your password">
+            <button matSuffix mat-icon-button (click)="validatePassword()">
+              <mat-icon style="color: #818181">send</mat-icon>
+            </button>
+          </mat-form-field>
+        </form>
+      </div>
+    <div *ngIf="password">
+      <div id="message-box" class="message-box">
+        <ng-container *ngFor="let m of messages">
+          <div *ngIf="sender.id === m.senderId" class="sender message">
+            <div style="font-size: 12px; color: #818181">{{getDate(m.date)}}</div>
+            {{m.senderEncryptedMessage}}
+          </div>
 
-        <div *ngIf="sender.id !== m.senderId" class="receiver message">
-          <div style="font-size: 12px; color: #818181">{{getDate(m.date)}}</div>
-          {{m.receiverEncryptedMessage}}
-        </div>
-      </ng-container>
+          <div *ngIf="sender.id !== m.senderId" class="receiver message">
+            <div style="font-size: 12px; color: #818181">{{getDate(m.date)}}</div>
+            {{m.receiverEncryptedMessage}}
+          </div>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>

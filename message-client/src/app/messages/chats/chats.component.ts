@@ -23,6 +23,7 @@ export class ChatsComponent implements OnInit {
   subscribe4: Subscription;
 
   form: FormGroup;
+  passwordForm: FormGroup;
   receiver = {
     identifier: null,
     id: null,
@@ -41,6 +42,7 @@ export class ChatsComponent implements OnInit {
     password: null,
   };
   messages = [];
+  password = null;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -50,6 +52,10 @@ export class ChatsComponent implements OnInit {
   ) {
     this.form = new FormGroup({
       message: new FormControl(null, Validators.maxLength(120))
+    });
+
+    this.passwordForm = new FormGroup({
+      password: new FormControl(null)
     });
   }
 
@@ -61,7 +67,13 @@ export class ChatsComponent implements OnInit {
         if (data === undefined || data.length !== 1)
           return;
         this.receiver = data[0];
-        this.getMessages();
+        if (this.password) {
+          this.form.controls.message.enable();
+          this.getMessages();
+        } else {
+          this.form.controls.message.disable();
+          this.password = null;
+        }
       });
     });
   }
@@ -75,7 +87,7 @@ export class ChatsComponent implements OnInit {
             .then(() => {
               const privateKey = openpgp.key.readArmored(this.sender.privateKey).keys[0];
 
-              if (privateKey.decrypt(this.sender.password)) {
+              if (privateKey.decrypt(this.password)) {
                 return openpgp.decrypt({
                   privateKey: privateKey,
                   message: openpgp.message.readArmored(senderEncryptedMessage)
@@ -95,7 +107,7 @@ export class ChatsComponent implements OnInit {
             .then(() => {
               const privateKey = openpgp.key.readArmored(this.sender.privateKey).keys[0];
 
-              if (privateKey.decrypt(this.sender.password)) {
+              if (privateKey.decrypt(this.password)) {
                 return openpgp.decrypt({
                   privateKey: privateKey,
                   message: openpgp.message.readArmored(receiverEncryptedMessage)
@@ -153,6 +165,17 @@ export class ChatsComponent implements OnInit {
   }
 
   getDate(date) {
-    return moment(date).format('DD/MM/YYYY') + ' as ' +  moment(date).format('HH:mm');
+    return moment(date).format('DD/MM/YYYY') + ' as ' + moment(date).format('HH:mm');
+  }
+
+  validatePassword() {
+    const password = this.passwordForm.get('password').value;
+    this.loginService.login(this.sender.email, password).subscribe(data => {
+      this.password = password;
+      this.form.controls.message.enable();
+      this.getMessages();
+    }, error => {
+      this.snackBar.open('Wrong password!', '', { duration: 2000 });
+    });
   }
 }
