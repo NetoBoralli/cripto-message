@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MessageAPI.Models;
+﻿using MessageAPI.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MessageAPI.Controllers
 {
@@ -30,7 +30,13 @@ namespace MessageAPI.Controllers
 
             if (user == null) return BadRequest("User or password incorrect");
 
-            return Ok(user);
+            var obj = new
+            {
+                user,
+                token = Token.GenerateToken(30)
+            };
+
+            return Ok(obj);
         }
 
         [HttpPost("signup")]
